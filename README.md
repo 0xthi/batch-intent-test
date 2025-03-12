@@ -1,54 +1,17 @@
-# React + TypeScript + Vite
+This is a demo of intent signing that we need to integrate before placing any orders.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. Users will sign orders in metamask. We need to store data and signature of their order in this below format (we can add more fields if needed)
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
+"expiry": 1741893164,
+    "name": "ETH",
+    "orderType": "BUY",
+    "position": "1.5",
+    "signature": "0xe4f0461fce1a4a036b970070e09201283bb816acf9888cb9c516cae07211a0252d06a4da26f6f555fc7a0e3294fc41d169a04f03fdc95c97e021c253074b55d81b",
+    "value": "2000"
   },
-})
-```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. A .json file with name like this trades_2025-03-13_00-43-36 will be created for setted time interval (time interval is set as 1 min for testing. It will be 24 hrs). All trades will be pushed to this file till 24 hrs is complete and new file will be created after that.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+3. This file will be uploaded to IPFS on completion of time interval. We get CID from IPFS.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+4. Call intentBatchEmit in smart contract (this will be same USER_MANAGER address but for testing I deployed new one ) and provide (start timestamp, end timestamp, cid) and this will emit an event. It will retry for 2 times (needs improvement in retrying logic)
